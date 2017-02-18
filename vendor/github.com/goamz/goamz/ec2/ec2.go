@@ -24,10 +24,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/evergreen-ci/evergreen"
 	"github.com/goamz/goamz/aws"
+	"github.com/tychoish/grip/slogger"
 )
 
-const debug = false
+const debug = true
 
 // The EC2 type encapsulates operations with a specific EC2 region.
 type EC2 struct {
@@ -694,10 +696,13 @@ func (ec2 *EC2) RequestSpotInstances(options *RequestSpotInstances) (resp *Reque
 	addBlockDeviceParams(prefix, params, options.BlockDevices)
 
 	resp = &RequestSpotInstancesResp{}
+	evergreen.Logger.Errorf(slogger.ERROR, "Calling ec2.query with params: %v", params)
 	err = ec2.query(params, resp)
 	if err != nil {
+		evergreen.Logger.Errorf(slogger.ERROR, "Got ec2.query error: %v", err)
 		return nil, err
 	}
+	evergreen.Logger.Errorf(slogger.ERROR, "Got ec2.query resp: %v", resp)
 	return
 }
 
