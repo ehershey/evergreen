@@ -45,7 +45,7 @@ func NewClient(rt *ResilientTransport) *http.Client {
 			c.SetDeadline(rt.Deadline())
 			return c, nil
 		},
-		Proxy:             http.ProxyFromEnvironment,
+		Proxy: http.ProxyFromEnvironment,
 		DisableKeepAlives: false,
 	}
 	// TODO: Would be nice is ResilientTransport allowed clients to initialize
