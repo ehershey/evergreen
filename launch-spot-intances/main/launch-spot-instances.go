@@ -47,11 +47,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// var cloudManager EC2SpotManager
-	// var err error
-	// rawcloudManager, err := providers.GetCloudManager(d.Provider, settings)
-	// cloudManager := EC2SpotManager(rawcloudManager)
-	// cloudManager.Configure(settings)
 	cloudManager, err := providers.GetCloudManager(d.Provider, settings)
 	if err != nil {
 		evergreen.Logger.Errorf(slogger.ERROR, "Error getting cloud manager for distro: %v", err)
