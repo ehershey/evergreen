@@ -1,6 +1,8 @@
 package aws
 
 import (
+	"github.com/evergreen-ci/evergreen"
+	"github.com/tychoish/grip/slogger"
 	"math"
 	"net"
 	"net/http"
@@ -74,7 +76,9 @@ func (t *ResilientTransport) RoundTrip(req *http.Request) (*http.Response, error
 // If a wait function is specified, wait that amount of time
 // In between requests.
 func (t *ResilientTransport) tries(req *http.Request) (res *http.Response, err error) {
+	evergreen.Logger.Errorf(slogger.ERROR, "starting retry loop for request: %v, maxTries: %v, ", req, t.MaxTries)
 	for try := 0; try < t.MaxTries; try += 1 {
+		evergreen.Logger.Errorf(slogger.ERROR, "trying once in retry loop for request: %v, try: %v", req, try)
 		res, err = t.transport.RoundTrip(req)
 
 		if !t.ShouldRetry(req, res, err) {
@@ -87,6 +91,7 @@ func (t *ResilientTransport) tries(req *http.Request) (res *http.Response, err e
 			t.Wait(try)
 		}
 	}
+	evergreen.Logger.Errorf(slogger.ERROR, "ending retry loop for request: %v", req)
 
 	return
 }
