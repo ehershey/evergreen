@@ -45,7 +45,8 @@ func NewClient(rt *ResilientTransport) *http.Client {
 			c.SetDeadline(rt.Deadline())
 			return c, nil
 		},
-		Proxy: http.ProxyFromEnvironment,
+		Proxy:             http.ProxyFromEnvironment,
+		DisableKeepAlives: true,
 	}
 	// TODO: Would be nice is ResilientTransport allowed clients to initialize
 	// with http.Transport attributes.
@@ -68,6 +69,7 @@ var retryingTransport = &ResilientTransport{
 var RetryingClient = NewClient(retryingTransport)
 
 func (t *ResilientTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	evergreen.Logger.Errorf(slogger.ERROR, "in RoundTrip() for request: %v", req)
 	return t.tries(req)
 }
 
