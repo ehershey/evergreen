@@ -283,6 +283,11 @@ func (cloudManager *EC2SpotManager) SpawnInstance(d *distro.Distro, hostOpts clo
 			" for distro '%v' on intent host %v: %v", d.Id, intentHost.Id, err)
 	}
 
+	if len(spotResp.SpotRequestResults) != 1 {
+		return nil, evergreen.Logger.Errorf(slogger.ERROR, "Expected one spot request info, but got %v",
+			len(spotResp.SpotRequestResults))
+	}
+
 	spotReqRes := spotResp.SpotRequestResults[0]
 	if spotReqRes.State != SpotStatusOpen && spotReqRes.State != SpotStatusActive {
 		return nil, evergreen.Logger.Errorf(slogger.ERROR, "Spot request %v was found in "+
